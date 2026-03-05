@@ -17,7 +17,7 @@ COPY . .
 RUN mkdir build && cd build && cmake .. && make
 
 # --- 阶段 2: 运行测试 ---
-FROM ubuntu:24.04
+FROM ubuntu:22.04
 
 WORKDIR /app
 
