@@ -46,5 +46,5 @@ def run_cpp_app(num1, num2, expected):
 
 if __name__ == "__main__":
     run_cpp_app(2, 3, 5)
-    run_cpp_app(10.5, 2.5, 13.0)
+    run_cpp_app(11, 4, 15)
     print("所有测试完成。")
