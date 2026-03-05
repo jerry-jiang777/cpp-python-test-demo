@@ -1,40 +1,40 @@
 # --- 阶段 1: 构建 C++ 程序 ---
-# 使用 GCC 镜像作为构建环境
 FROM gcc:13 AS builder
 
 WORKDIR /app
 
-# 1. 更新包列表并安装 CMake (关键步骤：修复报错)
-# GCC 镜像基于 Debian/Ubuntu，使用 apt 包管理器
+# 安装构建工具
 RUN apt-get update && \
     apt-get install -y cmake && \
     rm -rf /var/lib/apt/lists/*
 
-# 2. 复制源码
 COPY . .
-
-# 3. 创建构建目录并编译
 RUN mkdir build && cd build && cmake .. && make
 
 # --- 阶段 2: 运行测试 ---
-FROM ubuntu:22.04
+# 关键修改：升级到 Ubuntu 24.04 以支持 GCC 13 的运行时库
+FROM ubuntu:24.04
 
 WORKDIR /app
 
-# 从构建阶段复制编译好的程序
+# 1. 复制编译好的程序
 COPY --from=builder /app/build/my_app ./build/my_app
 
-# 安装 Python 和依赖
+# 2. 安装依赖 (Ubuntu 24.04 需要显式安装 pip 和 venv)
 RUN apt-get update && \
-    apt-get install -y python3 python3-pip && \
+    apt-get install -y python3 python3-pip python3-venv && \
     rm -rf /var/lib/apt/lists/*
 
-# 复制测试脚本和依赖文件
+# 3. 复制测试文件
 COPY requirements.txt .
 COPY tests/ ./tests/
 
-# 安装 Python 依赖
-RUN pip3 install --no-cache-dir -r requirements.txt
+# 4. 创建并激活虚拟环境 (解决 PEP 668 警告)
+RUN python3 -m venv /opt/venv
+ENV PATH="/opt/venv/bin:$PATH"
 
-# 运行测试脚本
-CMD ["python3", "tests/test_runner.py"]
+# 5. 安装 Python 依赖
+RUN pip install --no-cache-dir -r requirements.txt
+
+# 运行测试
+CMD ["python", "tests/test_runner.py"]
