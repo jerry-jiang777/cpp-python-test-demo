@@ -1,6 +1,6 @@
 name: C++ CI with Docker
 
-on: [push, pull_request]
+on: [push]
 
 jobs:
   build-and-test:
