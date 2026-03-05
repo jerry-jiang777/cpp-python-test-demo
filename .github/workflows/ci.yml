@@ -1,0 +1,16 @@
+name: C++ CI with Docker
+
+on: [push, pull_request]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    steps:
+      # 1. 检出代码
+      - uses: actions/checkout@v4
+
+      # 2. 构建 Docker 镜像并运行
+      - name: Build and Test
+        run: |
+          docker build -t cpp-test-demo .
+          docker run --rm cpp-test-demo
