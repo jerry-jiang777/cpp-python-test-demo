@@ -1,12 +1,19 @@
 # --- 阶段 1: 构建 C++ 程序 ---
+# 使用 GCC 镜像作为构建环境
 FROM gcc:13 AS builder
 
 WORKDIR /app
 
-# 复制源码和构建文件
+# 1. 更新包列表并安装 CMake (关键步骤：修复报错)
+# GCC 镜像基于 Debian/Ubuntu，使用 apt 包管理器
+RUN apt-get update && \
+    apt-get install -y cmake && \
+    rm -rf /var/lib/apt/lists/*
+
+# 2. 复制源码
 COPY . .
 
-# 创建构建目录并编译
+# 3. 创建构建目录并编译
 RUN mkdir build && cd build && cmake .. && make
 
 # --- 阶段 2: 运行测试 ---
@@ -26,7 +33,7 @@ RUN apt-get update && \
 COPY requirements.txt .
 COPY tests/ ./tests/
 
-# 安装 Python 依赖 (如果有)
+# 安装 Python 依赖
 RUN pip3 install --no-cache-dir -r requirements.txt
 
 # 运行测试脚本
