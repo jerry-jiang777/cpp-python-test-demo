@@ -1,16 +1,16 @@
-name: C++ CI with Docker
+name: C++ CI with Docker   # GitHub Actions工作流名称
 
-on: [push]
+on: [push]  # 触发工作流的事件，这里是推送代码时触发
 
-jobs:
-  build-and-test:
-    runs-on: ubuntu-latest
-    steps:
+jobs: # 定义工作流中的任务
+  build-and-test: # 任务名称，用于在日志中标识
+    runs-on: ubuntu-latest # 任务运行的虚拟机环境，这里是最新版的 Ubuntu
+    steps: # 任务中的步骤，每个步骤都是一个独立的操作
       # 1. 检出代码
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v4 # 检出代码到工作目录(下载源码到Runner中否则构建找不到源码)
 
       # 2. 构建 Docker 镜像并运行
-      - name: Build and Test
-        run: |
-          docker build -t cpp-test-demo .
-          docker run --rm cpp-test-demo
+      - name: Build and Test # 步骤名称，用于在日志中标识
+        run: | # 步骤中的命令，这里是构建 Docker 镜像并运行容器
+          docker build -t cpp-test-demo . # 构建 Docker 镜像，标签为 cpp-test-demo
+          docker run --rm cpp-test-demo # 运行容器，--rm 选项表示容器退出后自动删除
